@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evolution of Sonar & Sonar Signal Processing Fundamentals</title>
+    <style>
+        :root {
+            /* DON Official Brand Colors */
+            --navy-blue: #00205B;
+            --navy-gold: #C5A059;
+            --haze-gray: #F5F5F5;
+            --officer-slate: #1D2731;
+
+            /* DON Typography Stacks */
+            --font-heading: "Georgia", "Times New Roman", serif;
+            --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+            --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: var(--haze-gray);
+            color: var(--officer-slate);
+            padding-top: 60px; /* Offsets content so the fixed header doesn't overlap */
+        }
+
+        /* --- Header & Navigation Bar --- */
+        header {
+            background-color: var(--officer-slate);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 3px solid var(--navy-gold);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .header-inner {
+            max-width: 950px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            flex-wrap: wrap;
+        }
+
+        .site-title {
+            color: #ffffff;
+            text-decoration: none;
+            font-family: var(--font-heading);
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95em;
+            transition: color 0.2s ease-in-out;
+        }
+
+        nav a:hover {
+            color: var(--navy-gold);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        /* Mobile Menu Logic */
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            nav {
+                display: none;
+                flex-basis: 100%;
+                flex-direction: column;
+                margin-top: 15px;
+                gap: 10px;
+            }
+            nav.open { display: flex; }
+            nav a {
+                padding-bottom: 8px;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            background-color: var(--navy-blue);
+            color: #ffffff;
+            text-align: center;
+            padding: 70px 20px;
+            border-bottom: 8px solid var(--navy-gold);
+        }
+
+        .hero h1 {
+            font-family: var(--font-heading);
+            font-size: 2.5em;
+            margin: 0 auto 10px auto;
+            color: #ffffff;
+            letter-spacing: -0.02em;
+            max-width: 800px;
+        }
+
+        .hero .subtitle {
+            font-size: 1.2em;
+            color: var(--haze-gray);
+            margin-bottom: 15px;
+        }
+
+        .hero .meta {
+            font-size: 0.95em;
+            color: #b0c4de;
+        }
+
+        .hero .meta a {
+            color: var(--navy-gold);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .hero .meta a:hover {
+            text-decoration: underline;
+        }
+
+        /* --- Main Content --- */
+        .container {
+            max-width: 900px;
+            margin: 0 auto 40px auto;
+            background-color: #ffffff;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            padding: 30px 50px;
+        }
+
+        h2 {
+            font-family: var(--font-heading);
+            color: var(--navy-blue);
+            border-bottom: 2px solid var(--navy-gold);
+            padding-bottom: 5px;
+            margin-top: 2.5em;
+            letter-spacing: -0.01em;
+            scroll-margin-top: 100px; /* Prevents sticky nav from covering heading */
+        }
+
+        h3 {
+            font-family: var(--font-heading);
+            color: var(--navy-blue);
+            margin-top: 1.5em;
+        }
+
+        ul {
+            list-style-type: square;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 0.5em;
+        }
+
+        a {
+            color: var(--navy-blue);
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* ── Schedule table ── */
+        .schedule-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 12px;
+        }
+
+        .schedule-table th,
+        .schedule-table td {
+        text-align: left;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+        vertical-align: top;
+        }
+
+        .schedule-table th {
+        background: var(--navy-gold);
+        /* color: #fff; */
+        font-weight: 600;
+        font-size: .9rem;
+        }
+
+        .schedule-table tr:last-child td { border-bottom: none; }
+
+        .schedule-table .time {
+        text-align: center;
+        white-space: nowrap;
+        font-weight: 600;
+        /* background-color: var(--haze-gray); */
+        width: 130px;
+        }
+
+        .schedule-table .module-title { font-weight: 600; }
+
+        /* --- Download Cards Grid --- */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-top: 1.5em;
+        }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid #e2e2e2;
+            border-top: 4px solid var(--navy-blue);
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-top-color 0.2s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            border-top-color: var(--navy-gold);
+        }
+
+        .card h4 {
+            font-family: var(--font-heading);
+            color: var(--navy-blue);
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .card p {
+            font-size: 0.9em;
+            color: var(--officer-slate);
+            flex-grow: 1; /* Pushes the button to the bottom */
+            margin-bottom: 20px;
+        }
+
+        .card .btn-placeholder {
+            display: block;
+            text-align: center;
+            background-color: var(--haze-gray);
+            color: var(--officer-slate);
+            padding: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border: 1px dashed #a0aab5;
+            border-radius: 3px;
+            cursor: default;
+        }
+
+        /* --- Custom Block Styles --- */
+        .author-bio {
+            margin-top: 1.5em;
+            padding: 20px;
+            background-color: var(--haze-gray);
+            border-left: 5px solid var(--navy-blue);
+        }
+
+        .code-block {
+            background-color: var(--haze-gray);
+            border-left: 4px solid var(--navy-blue);
+            padding: 15px;
+            font-family: var(--font-mono);
+            font-size: 0.95em;
+            color: var(--officer-slate);
+            overflow-x: auto;
+            margin: 15px 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--officer-slate);
+            color: var(--haze-gray);
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            .hero h1 { font-size: 2em; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="header-inner">
+            <a href="#top" class="site-title">OCEANS 2026 Tutorial</a>
+            <button class="menu-toggle" aria-label="Toggle navigation" onclick="document.querySelector('nav').classList.toggle('open')">&#9776;</button>
+            <nav>
+                <a href="#about">Home</a>
+                <a href="#schedule">Schedule</a>
+                <a href="#materials">Materials</a>
+                <a href="#setup">Software Setup</a>
+                <a href="#instructors">Instructors</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <div class="hero" id="top">
+        <h1>Evolution of Sonar & Sonar Signal Processing Fundamentals</h1>
+        <div class="subtitle">Half-Day Tutorial &middot; OCEANS 2026</div>
+
+        <!-- <div class="meta">
+            Project site: <a href="#" target="_blank" rel="noopener">To be posted</a>
+            &nbsp;&middot;&nbsp;
+            GitHub: <a href="https://github.com" target="_blank" rel="noopener">github.com</a>
+        </div> -->
+    </div>
+
+    <!-- Main Content -->
+    <main class="container">
+
+        <section id="about">
+            <h2 style="margin-top: 0;">About This Tutorial</h2>
+            <p>
+                In sonar education, it is often useful to review the process of sonar design: historic, current, and prospects for the future. Sound navigation and ranging equipment for subsea navigation, target detection, and imaging has undergone many iterations, with improved developments in the technology since World War II. Today, we may take these developments for granted, and it is easy to forget the underlying fundamentals for processing such data. This may lead to an improper handling of sonar data and a misunderstanding of what a specific transducer is capable of doing and what its output is telling the operator. This tutorial is designed to facilitate development of next generation engineering professionals, sensors, and automation techniques for maritime surveillance, reconnaissance, navigation and communication. The material will cover the history of sonar systems, review important sonar signal processing techniques, and practice converting raw sonar signals into meaningful output.
+            </p>
+
+            <h3>Who Should Attend</h3>
+            <p>
+                Practicing engineers, researchers, and graduate students working in sonar sensor design or sonar signal processing.
+                Any attendees interested in learning more about the history of sonar system development are also encouraged to attend.
+                This tutorial is also approachable for any students or researchers with a basic digital signal processing background but little exposure to sonar signals and data.
+            </p>
+
+            <h3>Recommended Prerequisites</h3>
+            Although we plan to make all material approachable for newcomers (programming solutions, slides/notes provided), we highly recommend that attendees (at minimum) have the following skills:
+            <ul>
+                <li>Basic knowledge of digital signal processing concepts (e.g., sampling rate, Fourier Transforms).</li>
+                <li>Basic knowledge of how ocean signals propagate underwater.</li>
+                <li>Proficiency in reading, writing, and debugging Python code.</li>
+            </ul>
+
+            <h3>Learning Objectives</h3>
+            <p>By the end of this tutorial, attendees will be able to...</p>
+            <ul>
+                <li>Recognize the historical trend of sonar signal processing since the early 1900s.</li>
+                <li>Gain intuition about digital signal processing (DSP) techniques used to process sonar data.</li>
+                <li>Program DSP algorithms for the purpose of beamforming multi-element sonar data.</li>
+                <li>Apply matched filtering to coherently produce synthetic aperture sonar (SAS) data.</li>
+            </ul>
+        </section>
+
+        <section id="schedule">
+            <h2>Planned Schedule</h2>
+            Half-day single-track event (4 hours).
+            The first-half of the tutorial will focus on lecture, but "Basics of DSP" and "Basics of Sonar DSP" will focus on including multiple hands-on exercises that attendees are encouraged to use while following along. Thus, please bring your own laptop with appropriate libraries pre-installed (see <a href="#setup">Pre-Tutorial Software Setup</a> below).
+            Approximate time lengths are listed below, and exact timings and descriptions will be provided in the future.
+            <table class="schedule-table">
+                <thead>
+                    <tr><th>Time Length</th><th>Topic</th></tr>
+                </thead>
+                <tbody>
+                <!-- New tutorial section -->
+                <tr>
+                    <td class="time">[60 min]</td>
+                    <td><span class="module-title">The Evolution and Future of Sonar</span></td>
+                </tr>
+                <tr>
+                    <td class="time">45 min</td>
+                    <td><i>1900s to Present</i><br>
+                        Covering the beginnings of sonar sensor development to the present age.
+                    </td>
+                </tr>
+                <tr>
+                    <td class="time">15 min</td>
+                    <td><i>Future of Sonar</i><br>
+                        Covering the future of sonar sensor development and application.
+                    </td>
+                </tr>
+                <!-- New tutorial section -->
+                <tr>
+                    <td class="time">[30 min]</td>
+                    <td><span class="module-title">Basics of DSP</span><br>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="time">5 min</td>
+                    <td><i>Signal Characteristics</i><br>
+                        lorem ipsum
+                    </td>
+                </tr>
+                <tr>
+                    <td class="time">15 min</td>
+                    <td><i>Intuition on Fourier Series and Transforms</i><br>
+                        lorem ipsum
+                    </td>
+                </tr>
+                <tr>
+                    <td class="time">10 min</td>
+                    <td><i>Matched Filtering</i><br>
+                        lorem ipsum
+                    </td>
+                </tr>
+                <tr>
+                    <td class="time">[10 min]</td>
+                    <td><span class="module-title">Coffee Break</span><br>
+                    </td>
+                </tr>
+                <!-- New tutorial section -->
+                <tr>
+                    <td class="time">[90 min]</td>
+                    <td><span class="module-title">Basics of Sonar DSP</span><br>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="time">15 min</td>
+                    <td><i>Single-element</i><br>
+                        lorem ipsum
+                    </td>
+                </tr>
+                <tr>
+                    <td class="time">15 min</td>
+                    <td><i>Multipath and Noise</i><br>
+                        lorem ipsum
+                    </td>
+                </tr>
+                <tr>
+                    <td class="time">30 min</td>
+                    <td><i>Beam patterns and Beamforming</i><br>
+                        lorem ipsum
+                    </td>
+                </tr>
+                <tr>
+                    <td class="time">30 min</td>
+                    <td><i>Sidescan Sonar and SAS Image Formation</i><br>
+                        lorem ipsum
+                    </td>
+                </tr>
+                <tr>
+                    <td class="time">[10 min]</td>
+                    <td><span class="module-title">Review and Q & A</span><br>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="materials">
+            <h2>Course Materials & Downloads</h2>
+            <p>All necessary files for the hands-on portions of this tutorial will be provided here immediately prior to the event.</p>
+
+            <div class="cards-grid">
+                <!-- Card 1 -->
+                <div class="card">
+                    <h4>Presentation Slides</h4>
+                    <p>Slide decks used during the lecture portions covering the evolution of sonar and DSP basics.</p>
+                    <a href="#" class="btn-placeholder">URL to be posted</a>
+                </div>
+                <!-- Card 2 -->
+                <div class="card">
+                    <h4>Jupyter Notebooks</h4>
+                    <p>Interactive Python notebooks containing the hands-on coding exercises for sonar signal processing.</p>
+                    <a href="#" class="btn-placeholder">URL to be posted</a>
+                </div>
+                <!-- Card 3 -->
+                <div class="card">
+                    <h4>Notebook Solutions</h4>
+                    <p>Completed versions of the Jupyter Notebook exercises for reference and self-checking.</p>
+                    <a href="#" class="btn-placeholder">URL to be posted</a>
+                </div>
+                <!-- Card 4 -->
+                <div class="card">
+                    <h4>Tutorial Data</h4>
+                    <p>Raw sonar datasets and signals used in the hands-on beamforming and SAS sessions.</p>
+                    <a href="#" class="btn-placeholder">URL to be posted</a>
+                </div>
+                <!-- Card 5
+                <div class="card">
+                    <h4>Additional Materials</h4>
+                    <p>Supplementary reading, reference sheets, and open-source software setup instructions.</p>
+                    <a href="#" class="btn-placeholder">URL to be posted</a>
+                </div> -->
+            </div>
+        </section>
+
+        <section id="setup">
+            <h2>Pre-Tutorial Software Setup</h2>
+            <p>
+                Attendees are expected to bring their own laptops with Python installed. To ensure compatibility and ease of setup, we strongly recommend using <strong>Miniforge3</strong> (a community-driven, minimal installer for conda specific to conda-forge) to manage your Python environment and dependencies.
+            </p>
+            <p>
+                Please download and install Miniforge3 for your operating system from the official
+                <a href="https://github.com/conda-forge/miniforge" target="_blank" rel="noopener">Miniforge GitHub</a> repository.
+            </p>
+            <p>
+                Once Python and your package manager are installed, please open your terminal or Anaconda prompt and ensure the following packages are installed in your environment prior to arriving:
+            </p>
+            <div class="code-block">
+                conda install joblib numpy jupyter ipykernel matplotlib scipy h5py
+            </div>
+            <p>
+                <em>Note: If you prefer using standard Python and <code>pip</code>, you can alternatively install them via:</em>
+            </p>
+            <div class="code-block">
+                pip install joblib numpy jupyter ipykernel matplotlib scipy h5py
+            </div>
+        </section>
+
+        <section id="instructors">
+            <h2>About the Authors / Instructors</h2>
+            <div class="author-bio">
+                <p><strong>Spencer J. Chang</strong> is an Electronics Engineer at the U.S. Naval Surface Warfare Center Panama City Division and works in the areas of digital signal processing, computer vision, and machine learning. In May of 2025, he received his PhD from the Department of Electrical and Computer Engineering (ECE) at the University of Florida while working with Prof. Alina Zare. While there, he was recognized with the ECE Graduate Student Service Excellence Award and ECE Graduate Student Teaching Excellence Award. His interests are in researching the development of novel deep learning architectures and teaching others in digital signal processing and machine learning.</p>
+            </div>
+            <div class="author-bio">
+                <p><strong>Dr. Daniel D. Sternlicht</strong> is the Distinguished Scientist for Littoral Sensing Technologies at the U.S. Naval Surface Warfare Center Panama City Division, where he serves as technical expert in sensing technologies relevant to the full spectrum of littoral warfare systems; provides subject matter expertise across the U.S. Naval Research and Development Establishment; and leads new developments in maritime reconnaissance and surveillance for Navy and Marine Corps missions. During a career that includes scientific research and program and line management, Dr. Sternlicht’s technical work has included SAS development; through-the-sensor environmental characterization; multi-sensor fusion; buried mine detection and classification; munitions remediation; automated seabed change detection; unmanned systems autonomy, situational awareness, navigation and communications; and anti-submarine warfare and tracking.</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>Acknowledgements</h2>
+            <p>
+                The instructors would like to acknowledge the following for their help in developing the material in this tutorial: [People's names go here].
+            </p>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>Hosted on GitHub Pages | U.S. Naval Surface Warfare Center Panama City Division</p>
+    </footer>
+
+</body>
+</html>
