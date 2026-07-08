@@ -205,9 +205,10 @@
 
         .schedule-table th {
         background: var(--navy-gold);
-        /* color: #fff; */
+        color: var(--navy-blue);
+        font-family: var(--font-heading);
         font-weight: 600;
-        font-size: .9rem;
+        font-size: 1.2rem;
         }
 
         .schedule-table tr:last-child td { border-bottom: none; }
@@ -215,12 +216,17 @@
         .schedule-table .time {
         text-align: center;
         white-space: nowrap;
-        font-weight: 600;
+        font-weight: 650;
         /* background-color: var(--haze-gray); */
-        width: 130px;
+        color: var(--officer-slate);
+        width: 140px;
         }
 
-        .schedule-table .module-title { font-weight: 600; }
+        .schedule-table .module-title {
+            color: var(--navy-blue);
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
 
         /* --- Download Cards Grid --- */
         .cards-grid {
@@ -332,7 +338,9 @@
     <div class="hero" id="top">
         <h1>Evolution of Sonar & Sonar Signal Processing Fundamentals</h1>
         <div class="subtitle">Half-Day Tutorial &middot; OCEANS 2026</div>
-
+        <div class="meta">
+            Distribution Statement A: Approved for public release; distribution is unlimited.
+        </div>
         <!-- <div class="meta">
             Project site: <a href="#" target="_blank" rel="noopener">To be posted</a>
             &nbsp;&middot;&nbsp;
@@ -359,9 +367,10 @@
             <h3>Recommended Prerequisites</h3>
             Although we plan to make all material approachable for newcomers (programming solutions, slides/notes provided), we highly recommend that attendees (at minimum) have the following skills:
             <ul>
-                <li>Basic knowledge of digital signal processing concepts (e.g., sampling rate, Fourier Transforms).</li>
-                <li>Basic knowledge of how ocean signals propagate underwater.</li>
-                <li>Proficiency in reading, writing, and debugging Python code.</li>
+                <li><b>Linear Algebra</b>: Basic understanding of what eigenvalues and eigenvectors are and what they represent for a multidimensional dataset.</li>
+                <li><b>Digital Signal Processing</b>: Basic knowledge of periodicity, frequency, Fourier Transforms.</li>
+                <li><b>Water Channels</b>: Basic knowledge of how ocean signals propagate underwater.</li>
+                <li><b>Programming</b>: Proficiency in reading, writing, and debugging Python code.</li>
             </ul>
 
             <h3>Learning Objectives</h3>
@@ -376,9 +385,8 @@
 
         <section id="schedule">
             <h2>Planned Schedule</h2>
-            Half-day single-track event (4 hours).
-            The first-half of the tutorial will focus on lecture, but "Basics of DSP" and "Basics of Sonar DSP" will focus on including multiple hands-on exercises that attendees are encouraged to use while following along. Thus, please bring your own laptop with appropriate libraries pre-installed (see <a href="#setup">Pre-Tutorial Software Setup</a> below).
-            Approximate time lengths are listed below, and exact timings and descriptions will be provided in the future.
+            This tutorial is scheduled as a half-day, single-track event (4 hours) and currently has 3.5 hours total of planned topics/breaks.
+            The first major topic of the tutorial will focus on lecture, but "Basics of DSP" and "Basics of Sonar DSP" will shift to multiple hands-on exercises that attendees are encouraged to use while following along. Thus, please bring your own laptop with appropriate libraries pre-installed (see <a href="#setup">Pre-Tutorial Software Setup</a> below).
             <table class="schedule-table">
                 <thead>
                     <tr><th>Time Length</th><th>Topic</th></tr>
@@ -391,13 +399,13 @@
                 </tr>
                 <tr>
                     <td class="time">45 min</td>
-                    <td><i>1900s to Present</i><br>
+                    <td><b>1900s to Present</b><br>
                         Covering the beginnings of sonar sensor development to the present age.
                     </td>
                 </tr>
                 <tr>
                     <td class="time">15 min</td>
-                    <td><i>Future of Sonar</i><br>
+                    <td><b>Future of Sonar</b><br>
                         Covering the future of sonar sensor development and application.
                     </td>
                 </tr>
@@ -408,21 +416,25 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="time">5 min</td>
-                    <td><i>Signal Characteristics</i><br>
-                        lorem ipsum
-                    </td>
-                </tr>
-                <tr>
-                    <td class="time">15 min</td>
-                    <td><i>Intuition on Fourier Series and Transforms</i><br>
-                        lorem ipsum
+                    <td class="time">10 min</td>
+                    <td><b>Signal Characteristics</b><br>
+                        Importance of sampling rate and signal phase.
+                        Connections between time delay and phase of returned echoes.
+                        Brief discussion on Euler's formula.
+                        Introduction of passband and baseband concept and the significance of both.
                     </td>
                 </tr>
                 <tr>
                     <td class="time">10 min</td>
-                    <td><i>Matched Filtering</i><br>
-                        lorem ipsum
+                    <td><b>Intuition on Fourier Series and Transforms</b><br>
+                        Viewing Fourier transforms as projections. Review on the usefulness of the Fourier domain when processing/filtering and shifting signal frequency.
+                    </td>
+                </tr>
+                <tr>
+                    <td class="time">15 min</td>
+                    <td><b>Matched Filtering</b><br>
+                        Overview of its place in the sonar processing pipeline.
+                        Derivation of the optimal filter for received signals given knowledge of projected radar or sonar pings.
                     </td>
                 </tr>
                 <tr>
@@ -437,27 +449,29 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="time">15 min</td>
-                    <td><i>Single-element</i><br>
-                        lorem ipsum
-                    </td>
-                </tr>
-                <tr>
-                    <td class="time">15 min</td>
-                    <td><i>Multipath and Noise</i><br>
-                        lorem ipsum
-                    </td>
-                </tr>
-                <tr>
-                    <td class="time">30 min</td>
-                    <td><i>Beam patterns and Beamforming</i><br>
-                        lorem ipsum
+                    <td class="time">25 min</td>
+                    <td><b>Single-element, Multipath, and Noise</b><br>
+                        Overview of the sonar equation.
+                        Flowchart of operations when finding probability of object detection.
+                        Discussion on how sonar signals propagate through water channels and noise sources to consider.
+                        Object detection in a water channel using simulated data from BELLHOP (<a href="http://oalib.hlsresearch.com/AcousticsToolbox/" target="_blank" rel="noopener">Acoustics Toolbox</a>).
                     </td>
                 </tr>
                 <tr>
                     <td class="time">30 min</td>
-                    <td><i>Sidescan Sonar and SAS Image Formation</i><br>
-                        lorem ipsum
+                    <td><b>Beam patterns and Beamforming</b><br>
+                        Motivation for beamforming in reference to sonar equation.
+                        Derive basic delay-and-sum beamforming equations.
+                        Apply beam pattern windowing functions to suppress sidelobes and discuss tradeoffs.
+                        Compare different beamforming methods, including Minimum Variance Distortionless Response and Multiple Signal Classification.
+                    </td>
+                </tr>
+                <tr>
+                    <td class="time">35 min</td>
+                    <td><b>Sidescan Sonar and SAS Image Formation</b><br>
+                        Demonstrate tradeoffs of sidescan and SAS image formation algorithms.
+                        Create a SAS image with time-delay beamforming.
+                        Cover intuition on the Omega-K beamforming algorithm.
                     </td>
                 </tr>
                 <tr>
@@ -470,33 +484,35 @@
         </section>
 
         <section id="materials">
-            <h2>Course Materials & Downloads</h2>
-            <p>All necessary files for the hands-on portions of this tutorial will be provided here immediately prior to the event.</p>
+            <h2>Tutorial Materials & Downloads</h2>
+            <p>Sample files for the hands-on portions of this tutorial will be provided here prior to the event. Complete versions of the files will be provided to attendees closer to the OCEANS26. Any Tutorial Data released below are provided through publicly available data or through an acoustic simulator
+            (<a href="https://github.com/Sonar-Sim/MASTODON" target="_blank" rel="noopener">Sonar-Sim/MASTODON</a>).
+            </p>
 
             <div class="cards-grid">
                 <!-- Card 1 -->
                 <div class="card">
                     <h4>Presentation Slides</h4>
-                    <p>Slide decks used during the lecture portions covering the evolution of sonar and DSP basics.</p>
-                    <a href="#" class="btn-placeholder">URL to be posted</a>
+                    <p>Slide deck used during the lecture portions covering the evolution of sonar and DSP basics.</p>
+                    <a href="#" class="btn-placeholder">Download link to be posted</a>
                 </div>
                 <!-- Card 2 -->
                 <div class="card">
                     <h4>Jupyter Notebooks</h4>
-                    <p>Interactive Python notebooks containing the hands-on coding exercises for sonar signal processing.</p>
-                    <a href="#" class="btn-placeholder">URL to be posted</a>
+                    <p>Interactive Jupyter Notebook files containing hands-on coding exercises for sonar signal processing.</p>
+                    <a href="#" class="btn-placeholder">Download link to be posted</a>
                 </div>
                 <!-- Card 3 -->
                 <div class="card">
                     <h4>Notebook Solutions</h4>
                     <p>Completed versions of the Jupyter Notebook exercises for reference and self-checking.</p>
-                    <a href="#" class="btn-placeholder">URL to be posted</a>
+                    <a href="#" class="btn-placeholder">Download link to be posted</a>
                 </div>
                 <!-- Card 4 -->
                 <div class="card">
                     <h4>Tutorial Data</h4>
-                    <p>Raw sonar datasets and signals used in the hands-on beamforming and SAS sessions.</p>
-                    <a href="#" class="btn-placeholder">URL to be posted</a>
+                    <p>Simulated sonar datasets and signals used in the hands-on beamforming and SAS sessions.</p>
+                    <a href="#" class="btn-placeholder">Download link to be posted</a>
                 </div>
                 <!-- Card 5
                 <div class="card">
@@ -533,7 +549,7 @@
         <section id="instructors">
             <h2>About the Authors / Instructors</h2>
             <div class="author-bio">
-                <p><strong>Spencer J. Chang</strong> is an Electronics Engineer at the U.S. Naval Surface Warfare Center Panama City Division and works in the areas of digital signal processing, computer vision, and machine learning. In May of 2025, he received his PhD from the Department of Electrical and Computer Engineering (ECE) at the University of Florida while working with Prof. Alina Zare. While there, he was recognized with the ECE Graduate Student Service Excellence Award and ECE Graduate Student Teaching Excellence Award. His interests are in researching the development of novel deep learning architectures and teaching others in digital signal processing and machine learning.</p>
+                <p><strong>Dr. Spencer J. Chang</strong> is an Electronics Engineer at the U.S. Naval Surface Warfare Center Panama City Division and works in the areas of digital signal processing, computer vision, and machine learning. In May of 2025, he received his PhD from the Department of Electrical and Computer Engineering (ECE) at the University of Florida while working with Prof. Alina Zare. While there, he was recognized with the ECE Graduate Student Service Excellence Award and ECE Graduate Student Teaching Excellence Award. His interests are in researching the development of novel deep learning architectures and teaching others in digital signal processing and machine learning.</p>
             </div>
             <div class="author-bio">
                 <p><strong>Dr. Daniel D. Sternlicht</strong> is the Distinguished Scientist for Littoral Sensing Technologies at the U.S. Naval Surface Warfare Center Panama City Division, where he serves as technical expert in sensing technologies relevant to the full spectrum of littoral warfare systems; provides subject matter expertise across the U.S. Naval Research and Development Establishment; and leads new developments in maritime reconnaissance and surveillance for Navy and Marine Corps missions. During a career that includes scientific research and program and line management, Dr. Sternlicht’s technical work has included SAS development; through-the-sensor environmental characterization; multi-sensor fusion; buried mine detection and classification; munitions remediation; automated seabed change detection; unmanned systems autonomy, situational awareness, navigation and communications; and anti-submarine warfare and tracking.</p>
@@ -543,7 +559,7 @@
         <section>
             <h2>Acknowledgements</h2>
             <p>
-                The instructors would like to acknowledge the following for their help in developing the material in this tutorial: [People's names go here].
+                The instructors would like to acknowledge the following for their help in developing the material in this tutorial: Dr. Adriana L. McKinney, Samuel R. Shaffer, Evan Marcinkevage, John C. Moore, Jemma A. Smith, Jacqueline A. Sternlicht, Angelica M. Velazquez-Lassalle, and Kagan Zimmerman.
             </p>
         </section>
 
